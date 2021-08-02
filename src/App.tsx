@@ -1,45 +1,27 @@
-import React, { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React, { useState } from "react";
+import "./App.css";
+import keyboardMap from "./lib/keyboard-map";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [keyboardKey, setKeyboardKey] = useState("");
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+	document.addEventListener("keydown", (e) => {
+		setKeyboardKey(e.key);
+	});
+
+	const renderKeyDictionary = () => {
+		if (!keyboardMap[keyboardKey]) {
+			return <p>{keyboardKey} does not have an associated vim command</p>;
+		}
+
+		return (
+			<p>
+				{keyboardKey}: {keyboardMap[keyboardKey]}
+			</p>
+		);
+	};
+
+	return <div className="App">{keyboardKey && renderKeyDictionary()}</div>;
 }
 
-export default App
+export default App;
