@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./App.css";
 import keyboardMap from "./lib/keyboard-map";
 
 function App() {
