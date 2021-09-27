@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import KeyQueue from "./components/KeyQueue";
+import TitleScreen from "./components/TitleScreen";
 
 export default function App() {
   const [keyItems, setKeyItems] = useState<string[] | []>([]);
@@ -50,13 +51,7 @@ export default function App() {
             <p className="mt-4">Press backspace to undo.</p>
           </>
         ) : (
-          <div>
-            <h1 className="text-5xl mb-4">
-              <span className="text-emerald-500">Vim</span>
-              <span>mer</span>
-            </h1>
-            <p>Press a keyboard key to find what it maps to in Vim.</p>
-          </div>
+          <TitleScreen />
         )}
       </div>
     </div>
