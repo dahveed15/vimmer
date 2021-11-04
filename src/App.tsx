@@ -1,50 +1,59 @@
-import React, { useState } from "react";
-import keyboardMap from "./lib/keyboard-map";
+import React, { useState, useEffect } from "react";
+import KeyQueue from "./components/KeyQueue";
+import TitleScreen from "./components/TitleScreen";
 
-function App() {
-  const [keyboardKey, setKeyboardKey] = useState("");
+export default function App() {
+  const [keyItems, setKeyItems] = useState<string[] | []>([]);
+  const invalidKeys = [
+    "Meta",
+    "Shift",
+    "CapsLock",
+    "Tab",
+    "Enter",
+    "Alt",
+    "Control",
+    ";",
+  ];
 
-  document.addEventListener("keydown", (e) => {
-    setKeyboardKey(e.key);
-  });
-
-  const renderKeyDictionary = () => {
-    if (!keyboardMap[keyboardKey]) {
-      return (
-        <span className="flex items-center">
-          <strong className="text-xl mr-2 border border-emerald-500 py-1 px-3 rounded">
-            {keyboardKey}
-          </strong>
-          does not have an associated vim command
-        </span>
-      );
+  // TODO: This seems like a good function to convert to a hook.
+  const handleKeyToQueue = (event: KeyboardEvent) => {
+    if (event.key === "Backspace") {
+      return setKeyItems((prevState) => prevState.slice(0, -1));
     }
 
-    return (
-      <span className="flex items-center">
-        <strong className="text-xl mr-2 border border-emerald-500 py-1 px-3 rounded">
-          {keyboardKey}
-        </strong>
-        {keyboardMap[keyboardKey]}
-      </span>
-    );
+    if (invalidKeys.includes(event.key)) {
+      return;
+    }
+
+    setKeyItems((prevState) => {
+      if (prevState.length === 3) {
+        return [...prevState.slice(1), event.key];
+      }
+
+      return [...prevState, event.key];
+    });
   };
+
+  useEffect(() => {
+    document.addEventListener("keydown", (e) => handleKeyToQueue(e));
+
+    return () => {
+      document.removeEventListener("keydown", (e) => handleKeyToQueue(e));
+    };
+  }, []);
 
   return (
     <div className="App h-full text-light-50 flex items-center justify-center">
-      {keyboardKey.length > 0 ? (
-        <div>{renderKeyDictionary()}</div>
-      ) : (
-        <div>
-          <h1 className="text-5xl mb-4">
-            <span className="text-emerald-500">Vim</span>
-            <span>mer</span>
-          </h1>
-          <p>Press a keyboard key to find what it maps to in Vim.</p>
-        </div>
-      )}
+      <div className="flex-row">
+        {keyItems.length > 0 ? (
+          <>
+            <KeyQueue items={keyItems} />
+            <p className="mt-4">Press backspace to undo.</p>
+          </>
+        ) : (
+          <TitleScreen />
+        )}
+      </div>
     </div>
   );
 }
-
-export default App;
